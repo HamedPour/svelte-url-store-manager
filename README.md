@@ -1,0 +1,1 @@
+# svelte-url-store-manager
