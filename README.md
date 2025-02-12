@@ -1,58 +1,108 @@
-# create-svelte
+# svelte-url-store-manager
 
-Everything you need to build a Svelte library, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/main/packages/create-svelte).
+A lightweight Svelte package that synchronizes your store data with URL parameters, enabling seamless state persistence and sharing through URLs.
 
-Read more about creating a library [in the docs](https://svelte.dev/docs/kit/packaging).
+## Features
 
-## Creating a project
+- 🔄 Two-way binding between Svelte stores and URL parameters
+- 🗜️ Automatic compression of state data using LZ-String
+- 📱 SvelteKit compatible
+- 🔍 Debug mode for development
+- 🔀 Handles route changes gracefully
+- 🔗 Easy state sharing via URLs
 
-If you're seeing this, you've probably already done this step. Congrats!
-
-```bash
-# create a new project in the current directory
-npx sv create
-
-# create a new project in my-app
-npx sv create my-app
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+## Installation
 
 ```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+npm install svelte-url-store-manager
 ```
 
-Everything inside `src/lib` is part of your library, everything inside `src/routes` can be used as a showcase or preview app.
+## Usage
 
-## Building
-
-To build your library:
-
-```bash
-npm run package
+1. Import the URLStore component:
+```svelte
+import { URLStore } from 'svelte-url-store-manager';
 ```
 
-To create a production version of your showcase app:
+2. Bind it to your store:
+```svelte
+<script>
+  import { writable } from 'svelte/store';
+  
+  const myStore = writable({
+    // your store data
+  });
+</script>
 
-```bash
-npm run build
+<URLStore bind:data={$myStore} />
 ```
 
-You can preview the production build with `npm run preview`.
+### Debug Mode
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+Enable debug mode to see detailed logs in the console:
 
-## Publishing
-
-Go into the `package.json` and give your package the desired name through the `"name"` option. Also consider adding a `"license"` field and point it to a `LICENSE` file which you can create from a template (one popular option is the [MIT license](https://opensource.org/license/mit/)).
-
-To publish your library to [npm](https://www.npmjs.com):
-
-```bash
-npm publish
+```svelte
+<URLStore bind:data={$myStore} debug={true} />
 ```
+
+## How It Works
+
+The package automatically:
+1. Compresses your store data using LZ-String compression
+2. Stores the compressed data in the URL parameter `_z`
+3. Syncs URL parameters across route changes
+4. Decompresses and updates store data when URL parameters change
+
+## Example
+
+```svelte
+<script>
+  import { writable } from 'svelte/store';
+  import { URLStore } from 'svelte-url-store-manager';
+
+  const formStore = writable({
+    name: '',
+    email: '',
+    preferences: {}
+  });
+</script>
+
+<URLStore bind:data={$formStore} />
+
+<form>
+  <input bind:value={$formStore.name} />
+  <input bind:value={$formStore.email} />
+  <!-- Your form content -->
+</form>
+```
+
+Now, any changes to `formStore` will be reflected in the URL, and the state can be restored by sharing the URL.
+
+## TypeScript Support
+
+The package includes TypeScript support out of the box. You can specify the type of your store data:
+
+```typescript
+interface MyData {
+  name: string;
+  count: number;
+}
+
+const myStore = writable<MyData>({
+  name: '',
+  count: 0
+});
+```
+
+## Limitations
+
+- URL length restrictions may apply depending on the browser and server configuration
+- Complex data structures (like functions or circular references) cannot be serialized
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+MIT License - feel free to use this package in your projects.
