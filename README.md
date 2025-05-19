@@ -105,4 +105,4 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
 
-MIT License - feel free to use this package in your projects.
+MIT License - feel free to use this package in your projects
